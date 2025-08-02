@@ -20,7 +20,7 @@ spec:
       containers:
       - name: fastfood-api
         image: fastfood-api:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: always
         ports:
         - containerPort: 8080
           name: http
