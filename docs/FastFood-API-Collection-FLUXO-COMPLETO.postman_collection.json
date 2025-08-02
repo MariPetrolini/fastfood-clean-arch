@@ -1,0 +1,712 @@
+{
+	"info": {
+		"_postman_id": "fastfood-api-collection-fluxo-completo",
+		"name": "FastFood API - FLUXO COMPLETO COM PEDIDOS E PAGAMENTOS",
+		"description": "Collection completa da API FastFood com fluxo real: Produtos → Clientes → Checkout → Pedidos → Pagamentos → Status. Inclui todos os endpoints com exemplos reais para demonstração completa do sistema.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "fastfood-team-completo"
+	},
+	"item": [
+		{
+			"name": "🚀 FLUXO COMPLETO - PASSO A PASSO",
+			"description": "Execute nesta ordem para demonstrar o fluxo completo do sistema FastFood",
+			"item": [
+				{
+					"name": "PASSO 1 - Listar Categorias",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/produtos/categorias",
+							"host": ["{{base_url}}"],
+							"path": ["api", "produtos", "categorias"]
+						},
+						"description": "🎯 PRIMEIRO PASSO: Verificar categorias disponíveis no sistema"
+					}
+				},
+				{
+					"name": "PASSO 2 - Criar Produtos (4x)",
+					"description": "Execute os 4 requests abaixo para criar produtos de cada categoria",
+					"item": [
+						{
+							"name": "2.1 - Criar X-Bacon (LANCHE)",
+							"request": {
+								"method": "POST",
+								"header": [{"key": "Content-Type", "value": "application/json"}],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"nome\": \"X-Bacon Especial\",\n  \"descricao\": \"Hambúrguer artesanal 180g com bacon crocante, queijo cheddar, alface, tomate e molho especial\",\n  \"preco\": 24.90,\n  \"categoria\": \"LANCHE\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/produtos",
+									"host": ["{{base_url}}"],
+									"path": ["api", "produtos"]
+								}
+							}
+						},
+						{
+							"name": "2.2 - Criar Batata Frita (ACOMPANHAMENTO)",
+							"request": {
+								"method": "POST",
+								"header": [{"key": "Content-Type", "value": "application/json"}],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"nome\": \"Batata Frita Grande\",\n  \"descricao\": \"Porção grande de batata frita crocante temperada com sal especial\",\n  \"preco\": 12.50,\n  \"categoria\": \"ACOMPANHAMENTO\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/produtos",
+									"host": ["{{base_url}}"],
+									"path": ["api", "produtos"]
+								}
+							}
+						},
+						{
+							"name": "2.3 - Criar Refrigerante (BEBIDA)",
+							"request": {
+								"method": "POST",
+								"header": [{"key": "Content-Type", "value": "application/json"}],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"nome\": \"Coca-Cola 350ml\",\n  \"descricao\": \"Refrigerante Coca-Cola gelado servido em copo de 350ml com gelo\",\n  \"preco\": 6.50,\n  \"categoria\": \"BEBIDA\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/produtos",
+									"host": ["{{base_url}}"],
+									"path": ["api", "produtos"]
+								}
+							}
+						},
+						{
+							"name": "2.4 - Criar Milk Shake (SOBREMESA)",
+							"request": {
+								"method": "POST",
+								"header": [{"key": "Content-Type", "value": "application/json"}],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"nome\": \"Milk Shake Chocolate\",\n  \"descricao\": \"Milk shake cremoso de chocolate com chantilly e raspas de chocolate\",\n  \"preco\": 15.90,\n  \"categoria\": \"SOBREMESA\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/produtos",
+									"host": ["{{base_url}}"],
+									"path": ["api", "produtos"]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "PASSO 3 - Listar Produtos Criados",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/produtos",
+							"host": ["{{base_url}}"],
+							"path": ["api", "produtos"]
+						},
+						"description": "🎯 Verificar se todos os produtos foram criados (deve retornar 4 produtos)"
+					}
+				},
+				{
+					"name": "PASSO 4 - Criar Cliente",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nome\": \"João Silva Santos\",\n  \"cpf\": \"12345678901\",\n  \"email\": \"joao.silva@fastfood.com\",\n  \"telefone\": \"(11) 99999-1234\",\n  \"aceitaCampanhas\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/clientes",
+							"host": ["{{base_url}}"],
+							"path": ["api", "clientes"]
+						},
+						"description": "🎯 Criar cliente que fará o pedido"
+					}
+				},
+				{
+					"name": "PASSO 5 - CHECKOUT (Fazer Pedido)",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"cliente\": {\n    \"nome\": \"João Silva Santos\",\n    \"cpf\": \"12345678901\",\n    \"email\": \"joao.silva@fastfood.com\"\n  },\n  \"itens\": [\n    {\n      \"produtoId\": 1,\n      \"quantidade\": 1,\n      \"observacoes\": \"Sem cebola, por favor\"\n    },\n    {\n      \"produtoId\": 2,\n      \"quantidade\": 1,\n      \"observacoes\": \"Bem crocante\"\n    },\n    {\n      \"produtoId\": 3,\n      \"quantidade\": 1\n    }\n  ],\n  \"metodoPagamento\": \"PIX\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/pedidos/checkout",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pedidos", "checkout"]
+						},
+						"description": "🎯 CHECKOUT: Fazer pedido com X-Bacon + Batata + Coca-Cola (IDs 1, 2, 3)"
+					}
+				},
+				{
+					"name": "PASSO 6 - Consultar Status Pagamento",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pagamentos/pedido/1/status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pagamentos", "pedido", "1", "status"]
+						},
+						"description": "🎯 Verificar status do pagamento do pedido ID 1"
+					}
+				},
+				{
+					"name": "PASSO 7 - Listar Pedidos para Cozinha",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pedidos/cozinha",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pedidos", "cozinha"]
+						},
+						"description": "🎯 Ver pedidos na fila da cozinha (ordenados por prioridade)"
+					}
+				},
+				{
+					"name": "PASSO 8 - Iniciar Preparação",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pedidos/1/iniciar-preparacao",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pedidos", "1", "iniciar-preparacao"]
+						},
+						"description": "🎯 Cozinha inicia preparação do pedido"
+					}
+				},
+				{
+					"name": "PASSO 9 - Marcar como Pronto",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pedidos/1/marcar-pronto",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pedidos", "1", "marcar-pronto"]
+						},
+						"description": "🎯 Cozinha marca pedido como pronto"
+					}
+				},
+				{
+					"name": "PASSO 10 - Finalizar Pedido",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pedidos/1/finalizar",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pedidos", "1", "finalizar"]
+						},
+						"description": "🎯 Cliente retirou o pedido - finalizar"
+					}
+				}
+			]
+		},
+		{
+			"name": "🍔 PRODUTOS - Gerenciamento Completo",
+			"item": [
+				{
+					"name": "Listar Categorias",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/produtos/categorias",
+							"host": ["{{base_url}}"],
+							"path": ["api", "produtos", "categorias"]
+						}
+					}
+				},
+				{
+					"name": "Criar Produto - Big Burger",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nome\": \"Big Burger Duplo\",\n  \"descricao\": \"Dois hambúrgueres 120g, queijo cheddar duplo, bacon, alface, tomate, picles e molho Big\",\n  \"preco\": 32.90,\n  \"categoria\": \"LANCHE\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/produtos",
+							"host": ["{{base_url}}"],
+							"path": ["api", "produtos"]
+						}
+					}
+				},
+				{
+					"name": "Listar Todos os Produtos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/produtos",
+							"host": ["{{base_url}}"],
+							"path": ["api", "produtos"]
+						}
+					}
+				},
+				{
+					"name": "Buscar Produto por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/produtos/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "produtos", "1"]
+						}
+					}
+				},
+				{
+					"name": "Listar por Categoria - LANCHE",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/produtos/categoria/LANCHE",
+							"host": ["{{base_url}}"],
+							"path": ["api", "produtos", "categoria", "LANCHE"]
+						}
+					}
+				},
+				{
+					"name": "Buscar por Nome",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/produtos/buscar?nome=bacon",
+							"host": ["{{base_url}}"],
+							"path": ["api", "produtos", "buscar"],
+							"query": [{"key": "nome", "value": "bacon"}]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "👥 CLIENTES - Gerenciamento",
+			"item": [
+				{
+					"name": "Criar Cliente - Maria",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nome\": \"Maria Costa Oliveira\",\n  \"cpf\": \"98765432109\",\n  \"email\": \"maria.costa@fastfood.com\",\n  \"telefone\": \"(11) 88888-5678\",\n  \"aceitaCampanhas\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/clientes",
+							"host": ["{{base_url}}"],
+							"path": ["api", "clientes"]
+						}
+					}
+				},
+				{
+					"name": "Listar Todos os Clientes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/clientes",
+							"host": ["{{base_url}}"],
+							"path": ["api", "clientes"]
+						}
+					}
+				},
+				{
+					"name": "Buscar Cliente por CPF",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/clientes/cpf/12345678901",
+							"host": ["{{base_url}}"],
+							"path": ["api", "clientes", "cpf", "12345678901"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🛒 PEDIDOS - Fluxo Completo",
+			"item": [
+				{
+					"name": "Checkout - Pedido Combo",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"cliente\": {\n    \"nome\": \"Maria Costa Oliveira\",\n    \"cpf\": \"98765432109\",\n    \"email\": \"maria.costa@fastfood.com\"\n  },\n  \"itens\": [\n    {\n      \"produtoId\": 1,\n      \"quantidade\": 1,\n      \"observacoes\": \"Ponto da carne mal passado\"\n    },\n    {\n      \"produtoId\": 2,\n      \"quantidade\": 1\n    },\n    {\n      \"produtoId\": 3,\n      \"quantidade\": 1\n    },\n    {\n      \"produtoId\": 4,\n      \"quantidade\": 1,\n      \"observacoes\": \"Extra chantilly\"\n    }\n  ],\n  \"metodoPagamento\": \"CARTAO_CREDITO\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/pedidos/checkout",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pedidos", "checkout"]
+						},
+						"description": "Pedido completo: Lanche + Acompanhamento + Bebida + Sobremesa"
+					}
+				},
+				{
+					"name": "Checkout - Cliente Anônimo",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"cliente\": {\n    \"nome\": \"Cliente Anônimo\"\n  },\n  \"itens\": [\n    {\n      \"produtoId\": 1,\n      \"quantidade\": 2\n    }\n  ],\n  \"metodoPagamento\": \"PIX\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/pedidos/checkout",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pedidos", "checkout"]
+						},
+						"description": "Pedido de cliente sem CPF (anônimo)"
+					}
+				},
+				{
+					"name": "Listar Todos os Pedidos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pedidos",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pedidos"]
+						}
+					}
+				},
+				{
+					"name": "Listar Pedidos para Cozinha",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pedidos/cozinha",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pedidos", "cozinha"]
+						},
+						"description": "Pedidos ordenados: Pronto > Em Preparação > Recebido"
+					}
+				},
+				{
+					"name": "Buscar Pedido por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pedidos/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pedidos", "1"]
+						}
+					}
+				},
+				{
+					"name": "Listar Pedidos por Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pedidos/status/RECEBIDO",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pedidos", "status", "RECEBIDO"]
+						}
+					}
+				},
+				{
+					"name": "Listar Pedidos Ativos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pedidos/ativos",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pedidos", "ativos"]
+						},
+						"description": "Pedidos não finalizados"
+					}
+				},
+				{
+					"name": "Listar Pedidos de Hoje",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pedidos/hoje",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pedidos", "hoje"]
+						}
+					}
+				},
+				{
+					"name": "Iniciar Preparação do Pedido",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pedidos/2/iniciar-preparacao",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pedidos", "2", "iniciar-preparacao"]
+						}
+					}
+				},
+				{
+					"name": "Marcar Pedido como Pronto",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pedidos/2/marcar-pronto",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pedidos", "2", "marcar-pronto"]
+						}
+					}
+				},
+				{
+					"name": "Finalizar Pedido",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pedidos/2/finalizar",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pedidos", "2", "finalizar"]
+						}
+					}
+				},
+				{
+					"name": "Atualizar Status Manualmente",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pedidos/3/status?novoStatus=EM_PREPARACAO",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pedidos", "3", "status"],
+							"query": [{"key": "novoStatus", "value": "EM_PREPARACAO"}]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "💳 PAGAMENTOS - Gestão Completa",
+			"item": [
+				{
+					"name": "Consultar Status de Pagamento",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pagamentos/pedido/1/status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pagamentos", "pedido", "1", "status"]
+						}
+					}
+				},
+				{
+					"name": "Webhook Mercado Pago",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"12345678\",\n  \"live_mode\": false,\n  \"type\": \"payment\",\n  \"date_created\": \"2025-08-02T10:30:00.000-04:00\",\n  \"application_id\": \"123456789\",\n  \"user_id\": \"987654321\",\n  \"version\": 1,\n  \"api_version\": \"v1\",\n  \"action\": \"payment.updated\",\n  \"data\": {\n    \"id\": \"87654321\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/pagamentos/webhook",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pagamentos", "webhook"]
+						},
+						"description": "Simula webhook do Mercado Pago"
+					}
+				},
+				{
+					"name": "Buscar Pagamento por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pagamentos/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pagamentos", "1"]
+						}
+					}
+				},
+				{
+					"name": "Buscar Pagamento por Pedido",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pagamentos/pedido/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pagamentos", "pedido", "1"]
+						}
+					}
+				},
+				{
+					"name": "Listar Todos os Pagamentos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pagamentos",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pagamentos"]
+						}
+					}
+				},
+				{
+					"name": "Listar Pagamentos Pendentes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pagamentos/pendentes",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pagamentos", "pendentes"]
+						}
+					}
+				},
+				{
+					"name": "Listar Pagamentos Aprovados",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pagamentos/aprovados",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pagamentos", "aprovados"]
+						}
+					}
+				},
+				{
+					"name": "Aprovar Pagamento Manualmente",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pagamentos/1/aprovar?transacaoId=TXN-123456789",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pagamentos", "1", "aprovar"],
+							"query": [{"key": "transacaoId", "value": "TXN-123456789"}]
+						}
+					}
+				},
+				{
+					"name": "Recusar Pagamento",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pagamentos/2/recusar?motivo=Cartão sem limite",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pagamentos", "2", "recusar"],
+							"query": [{"key": "motivo", "value": "Cartão sem limite"}]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🔔 NOTIFICAÇÕES - Sistema Completo",
+			"item": [
+				{
+					"name": "Verificar Status do Serviço",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/notificacoes/status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notificacoes", "status"]
+						}
+					}
+				},
+				{
+					"name": "Notificar Pedido Pronto",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/notificacoes/pedido/1/pronto?clienteEmail=joao.silva@fastfood.com&numeroPedido=FF-001",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notificacoes", "pedido", "1", "pronto"],
+							"query": [
+								{"key": "clienteEmail", "value": "joao.silva@fastfood.com"},
+								{"key": "numeroPedido", "value": "FF-001"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Campanha Promocional",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"titulo\": \"🍔 Super Promoção FastFood!\",\n  \"mensagem\": \"Hoje é dia de combo especial! Lanche + Acompanhamento + Bebida por apenas R$ 29,90. Válido até às 23h. Corre que é por tempo limitado!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/notificacoes/campanhas",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notificacoes", "campanhas"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🏥 MONITORAMENTO",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/actuator/health",
+							"host": ["{{base_url}}"],
+							"path": ["actuator", "health"]
+						}
+					}
+				},
+				{
+					"name": "Métricas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/actuator/metrics",
+							"host": ["{{base_url}}"],
+							"path": ["actuator", "metrics"]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"description": "URL base da API FastFood (local)"
+		},
+		{
+			"key": "base_url_k8s",
+			"value": "http://fastfood-api.local",
+			"description": "URL base da API FastFood (Kubernetes)"
+		}
+	]
+}
+

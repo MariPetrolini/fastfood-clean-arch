@@ -1,0 +1,30 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: fastfood-api-pdb
+  namespace: fastfood
+  labels:
+    app: fastfood-api
+    component: pdb
+spec:
+  minAvailable: 2  # Sempre manter pelo menos 2 pods disponíveis
+  selector:
+    matchLabels:
+      app: fastfood-api
+---
+# PDB para ambiente de desenvolvimento
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: fastfood-api-pdb-dev
+  namespace: fastfood-dev
+  labels:
+    app: fastfood-api
+    environment: development
+    component: pdb
+spec:
+  minAvailable: 1  # Em dev, manter pelo menos 1 pod
+  selector:
+    matchLabels:
+      app: fastfood-api
+

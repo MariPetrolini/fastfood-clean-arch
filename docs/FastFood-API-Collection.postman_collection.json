@@ -1,0 +1,454 @@
+{
+	"info": {
+		"_postman_id": "fastfood-api-collection",
+		"name": "FastFood API - Clean Architecture",
+		"description": "Collection completa da API FastFood com Clean Architecture, incluindo todas as funcionalidades: produtos, pedidos, pagamentos, clientes, categorias e notificações.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "fastfood-team"
+	},
+	"item": [
+		{
+			"name": "🍔 Produtos",
+			"item": [
+				{
+					"name": "Listar Produtos Disponíveis",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/produtos/disponiveis",
+							"host": ["{{base_url}}"],
+							"path": ["api", "produtos", "disponiveis"]
+						}
+					}
+				},
+				{
+					"name": "Buscar Produtos por Categoria",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/produtos/categoria/LANCHE",
+							"host": ["{{base_url}}"],
+							"path": ["api", "produtos", "categoria", "LANCHE"]
+						}
+					}
+				},
+				{
+					"name": "Criar Produto",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nome\": \"Big Burger Especial\",\n  \"descricao\": \"Hambúrguer artesanal com carne 180g, queijo cheddar, bacon, alface, tomate e molho especial\",\n  \"preco\": 25.90,\n  \"categoria\": \"LANCHE\",\n  \"disponivel\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/produtos",
+							"host": ["{{base_url}}"],
+							"path": ["api", "produtos"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "👥 Clientes",
+			"item": [
+				{
+					"name": "Criar Cliente",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nome\": \"João Silva\",\n  \"cpf\": \"12345678901\",\n  \"email\": \"joao.silva@email.com\",\n  \"telefone\": \"(11) 99999-9999\",\n  \"aceitaCampanhas\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/clientes",
+							"host": ["{{base_url}}"],
+							"path": ["api", "clientes"]
+						}
+					}
+				},
+				{
+					"name": "Buscar Cliente por CPF",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/clientes/cpf/12345678901",
+							"host": ["{{base_url}}"],
+							"path": ["api", "clientes", "cpf", "12345678901"]
+						}
+					}
+				},
+				{
+					"name": "Listar Clientes para Campanhas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/clientes/campanhas",
+							"host": ["{{base_url}}"],
+							"path": ["api", "clientes", "campanhas"]
+						}
+					}
+				},
+				{
+					"name": "Estatísticas de Clientes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/clientes/estatisticas",
+							"host": ["{{base_url}}"],
+							"path": ["api", "clientes", "estatisticas"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🏷️ Categorias",
+			"item": [
+				{
+					"name": "Listar Todas as Categorias",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/categorias",
+							"host": ["{{base_url}}"],
+							"path": ["api", "categorias"]
+						}
+					}
+				},
+				{
+					"name": "Categorias com Produtos Disponíveis",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/categorias/disponiveis",
+							"host": ["{{base_url}}"],
+							"path": ["api", "categorias", "disponiveis"]
+						}
+					}
+				},
+				{
+					"name": "Estatísticas por Categoria",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/categorias/estatisticas",
+							"host": ["{{base_url}}"],
+							"path": ["api", "categorias", "estatisticas"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "📋 Pedidos",
+			"item": [
+				{
+					"name": "Realizar Checkout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"cliente\": {\n    \"nome\": \"Maria Santos\",\n    \"email\": \"maria.santos@email.com\",\n    \"cpf\": \"98765432100\"\n  },\n  \"itens\": [\n    {\n      \"produtoId\": 1,\n      \"quantidade\": 2,\n      \"observacoes\": \"Sem cebola\"\n    },\n    {\n      \"produtoId\": 2,\n      \"quantidade\": 1\n    }\n  ],\n  \"observacoes\": \"Entrega rápida, por favor\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/pedidos/checkout",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pedidos", "checkout"]
+						}
+					}
+				},
+				{
+					"name": "Lista de Pedidos para Cozinha",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pedidos/cozinha",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pedidos", "cozinha"]
+						}
+					}
+				},
+				{
+					"name": "Atualizar Status do Pedido",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"EM_PREPARACAO\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/pedidos/1/status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pedidos", "1", "status"]
+						}
+					}
+				},
+				{
+					"name": "Tempo de Espera do Pedido",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pedidos/1/tempo-espera",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pedidos", "1", "tempo-espera"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "💰 Pagamentos",
+			"item": [
+				{
+					"name": "Consultar Status de Pagamento",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/pagamentos/1/status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pagamentos", "1", "status"]
+						}
+					}
+				},
+				{
+					"name": "Webhook Mercado Pago",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"action\": \"payment.updated\",\n  \"api_version\": \"v1\",\n  \"data\": {\n    \"id\": \"123456789\"\n  },\n  \"date_created\": \"2024-01-15T10:30:00Z\",\n  \"id\": 987654321,\n  \"live_mode\": false,\n  \"type\": \"payment\",\n  \"user_id\": \"USER_ID\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/pagamentos/webhook",
+							"host": ["{{base_url}}"],
+							"path": ["api", "pagamentos", "webhook"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🔔 Notificações",
+			"item": [
+				{
+					"name": "Enviar Notificação Personalizada",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"destinatario\": \"cliente@email.com\",\n  \"titulo\": \"Promoção Especial!\",\n  \"mensagem\": \"Aproveite 20% de desconto em todos os lanches hoje!\",\n  \"tipo\": \"PROMOCAO\",\n  \"urgente\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/notificacoes/enviar",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notificacoes", "enviar"]
+						}
+					}
+				},
+				{
+					"name": "Enviar Campanha Promocional",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"titulo\": \"🍔 Super Promoção de Verão!\",\n  \"mensagem\": \"Combo completo por apenas R$ 19,90! Válido até domingo. Não perca!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/notificacoes/campanhas",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notificacoes", "campanhas"]
+						}
+					}
+				},
+				{
+					"name": "Notificar Pedido Pronto",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/notificacoes/pedido/1/pronto?clienteEmail=cliente@email.com&numeroPedido=001",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notificacoes", "pedido", "1", "pronto"],
+							"query": [
+								{
+									"key": "clienteEmail",
+									"value": "cliente@email.com"
+								},
+								{
+									"key": "numeroPedido",
+									"value": "001"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Alerta Tempo de Espera Elevado",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/notificacoes/alertas/tempo-espera?pedidoId=1&numeroPedido=001&tempoEspera=35",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notificacoes", "alertas", "tempo-espera"],
+							"query": [
+								{
+									"key": "pedidoId",
+									"value": "1"
+								},
+								{
+									"key": "numeroPedido",
+									"value": "001"
+								},
+								{
+									"key": "tempoEspera",
+									"value": "35"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Status do Serviço de Notificação",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/notificacoes/status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notificacoes", "status"]
+						}
+					}
+				},
+				{
+					"name": "Estatísticas de Notificações",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/notificacoes/estatisticas",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notificacoes", "estatisticas"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🏥 Health Check",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/actuator/health",
+							"host": ["{{base_url}}"],
+							"path": ["actuator", "health"]
+						}
+					}
+				},
+				{
+					"name": "Métricas Prometheus",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/actuator/prometheus",
+							"host": ["{{base_url}}"],
+							"path": ["actuator", "prometheus"]
+						}
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "k8s_url",
+			"value": "https://your-domain.com",
+			"type": "string"
+		}
+	]
+}
+

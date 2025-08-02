@@ -1,0 +1,100 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: fastfood-api-hpa
+  namespace: fastfood
+  labels:
+    app: fastfood-api
+    component: autoscaler
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: fastfood-api
+  minReplicas: 3
+  maxReplicas: 20
+  metrics:
+  # Métrica de CPU - escala quando CPU média > 70%
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  
+  # Métrica de Memória - escala quando memória média > 80%
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  
+  # Comportamento de escalabilidade otimizado
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 60  # Aguarda 60s antes de escalar para cima
+      policies:
+      - type: Percent
+        value: 100  # Pode dobrar o número de pods rapidamente
+        periodSeconds: 15
+      - type: Pods
+        value: 4    # Ou adicionar até 4 pods por vez
+        periodSeconds: 15
+      selectPolicy: Max  # Usa a política que resulta em mais pods
+    
+    scaleDown:
+      stabilizationWindowSeconds: 300  # Aguarda 5min antes de escalar para baixo
+      policies:
+      - type: Percent
+        value: 10   # Remove apenas 10% dos pods por vez (mais conservador)
+        periodSeconds: 60
+      - type: Pods
+        value: 2    # Ou remove até 2 pods por vez
+        periodSeconds: 60
+      selectPolicy: Min  # Usa a política que resulta em menos remoções
+---
+# HPA para ambiente de desenvolvimento (mais conservador)
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: fastfood-api-hpa-dev
+  namespace: fastfood-dev
+  labels:
+    app: fastfood-api
+    environment: development
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: fastfood-api-dev
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 85
+  
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 120
+      policies:
+      - type: Pods
+        value: 2
+        periodSeconds: 60
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Pods
+        value: 1
+        periodSeconds: 60
+

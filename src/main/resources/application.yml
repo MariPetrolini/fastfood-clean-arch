@@ -1,0 +1,97 @@
+spring:
+  application:
+    name: fastfood-api
+  
+  profiles:
+    active: dev
+  
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: 
+  
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    defer-datasource-initialization: true
+  
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:data.sql
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+# Configurações do Swagger/OpenAPI
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+
+# Configurações do Mercado Pago
+mercadopago:
+  # Para usar Mercado Pago real, configure:
+  # access-token: SEU_ACCESS_TOKEN_AQUI
+  # enabled: true
+  
+  # Configuração atual (mock/desenvolvimento)
+  access-token: TEST-ACCESS-TOKEN
+  enabled: false
+  webhook-url: http://localhost:8080/api/pagamentos/webhook
+  
+  # URLs da API
+  api:
+    base-url: https://api.mercadopago.com
+    payments-url: ${mercadopago.api.base-url}/v1/payments
+    
+  # Configurações de timeout
+  timeout:
+    connection: 5000
+    read: 10000
+
+# Configurações de logging
+logging:
+  level:
+    com.marianapetrolini.fastfood: INFO
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+# Configurações de segurança
+security:
+  cors:
+    allowed-origins: "*"
+    allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
+    allowed-headers: "*"
+    allow-credentials: false
+
+# Configurações da aplicação
+app:
+  name: FastFood API
+  version: 1.0.0
+  description: Sistema de gerenciamento de pedidos para fast food
+  
+  # Configurações de negócio
+  business:
+    # Tempo limite para pagamento PIX (em minutos)
+    pix-expiration-minutes: 30
+    
+    # Tempo para cancelar pedido sem pagamento (em minutos)
+    order-timeout-minutes: 15
+    
+    # Estoque mínimo para alertas
+    minimum-stock: 5

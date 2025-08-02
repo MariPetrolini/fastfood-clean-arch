@@ -1,0 +1,169 @@
+apiVersion: v1
+kind: ServiceMonitor
+metadata:
+  name: fastfood-api-metrics
+  namespace: fastfood
+  labels:
+    app: fastfood-api
+    monitoring: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: fastfood-api
+  endpoints:
+  - port: http
+    path: /actuator/prometheus
+    interval: 30s
+    scrapeTimeout: 10s
+---
+# ConfigMap para Grafana Dashboard
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fastfood-dashboard
+  namespace: fastfood
+  labels:
+    app: fastfood-api
+    grafana_dashboard: "1"
+data:
+  fastfood-dashboard.json: |
+    {
+      "dashboard": {
+        "id": null,
+        "title": "FastFood API Dashboard",
+        "tags": ["fastfood", "api", "spring-boot"],
+        "timezone": "browser",
+        "panels": [
+          {
+            "title": "Request Rate",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "rate(http_requests_total{job=\"fastfood-api\"}[5m])",
+                "legendFormat": "{{method}} {{uri}}"
+              }
+            ]
+          },
+          {
+            "title": "Response Time",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job=\"fastfood-api\"}[5m]))",
+                "legendFormat": "95th percentile"
+              }
+            ]
+          },
+          {
+            "title": "Error Rate",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "rate(http_requests_total{job=\"fastfood-api\",status=~\"4..|5..\"}[5m])",
+                "legendFormat": "Error Rate"
+              }
+            ]
+          },
+          {
+            "title": "Active Pods",
+            "type": "stat",
+            "targets": [
+              {
+                "expr": "kube_deployment_status_replicas_available{deployment=\"fastfood-api\"}",
+                "legendFormat": "Available Pods"
+              }
+            ]
+          },
+          {
+            "title": "CPU Usage",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "rate(container_cpu_usage_seconds_total{pod=~\"fastfood-api-.*\"}[5m]) * 100",
+                "legendFormat": "{{pod}}"
+              }
+            ]
+          },
+          {
+            "title": "Memory Usage",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "container_memory_usage_bytes{pod=~\"fastfood-api-.*\"} / 1024 / 1024",
+                "legendFormat": "{{pod}} (MB)"
+              }
+            ]
+          }
+        ]
+      }
+    }
+---
+# PrometheusRule para alertas
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: fastfood-api-alerts
+  namespace: fastfood
+  labels:
+    app: fastfood-api
+    prometheus: kube-prometheus
+    role: alert-rules
+spec:
+  groups:
+  - name: fastfood-api.rules
+    rules:
+    # Alerta para alta taxa de erro
+    - alert: FastFoodHighErrorRate
+      expr: rate(http_requests_total{job="fastfood-api",status=~"5.."}[5m]) > 0.1
+      for: 5m
+      labels:
+        severity: critical
+        service: fastfood-api
+      annotations:
+        summary: "FastFood API high error rate"
+        description: "FastFood API error rate is {{ $value }} errors per second"
+    
+    # Alerta para alta latência
+    - alert: FastFoodHighLatency
+      expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="fastfood-api"}[5m])) > 2
+      for: 5m
+      labels:
+        severity: warning
+        service: fastfood-api
+      annotations:
+        summary: "FastFood API high latency"
+        description: "FastFood API 95th percentile latency is {{ $value }}s"
+    
+    # Alerta para pods indisponíveis
+    - alert: FastFoodPodsDown
+      expr: kube_deployment_status_replicas_available{deployment="fastfood-api"} < 2
+      for: 2m
+      labels:
+        severity: critical
+        service: fastfood-api
+      annotations:
+        summary: "FastFood API pods unavailable"
+        description: "Only {{ $value }} FastFood API pods are available"
+    
+    # Alerta para alto uso de CPU
+    - alert: FastFoodHighCPU
+      expr: rate(container_cpu_usage_seconds_total{pod=~"fastfood-api-.*"}[5m]) * 100 > 80
+      for: 10m
+      labels:
+        severity: warning
+        service: fastfood-api
+      annotations:
+        summary: "FastFood API high CPU usage"
+        description: "Pod {{ $labels.pod }} CPU usage is {{ $value }}%"
+    
+    # Alerta para alto uso de memória
+    - alert: FastFoodHighMemory
+      expr: container_memory_usage_bytes{pod=~"fastfood-api-.*"} / container_spec_memory_limit_bytes{pod=~"fastfood-api-.*"} * 100 > 85
+      for: 10m
+      labels:
+        severity: warning
+        service: fastfood-api
+      annotations:
+        summary: "FastFood API high memory usage"
+        description: "Pod {{ $labels.pod }} memory usage is {{ $value }}%"
+

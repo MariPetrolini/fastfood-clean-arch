@@ -1,0 +1,158 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastfood-api
+  namespace: fastfood
+  labels:
+    app: fastfood-api
+    version: v1.0.0
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: fastfood-api
+  template:
+    metadata:
+      labels:
+        app: fastfood-api
+        version: v1.0.0
+    spec:
+      containers:
+      - name: fastfood-api
+        image: fastfood-api:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        env:
+        # Configurações do ConfigMap
+        - name: SPRING_PROFILES_ACTIVE
+          valueFrom:
+            configMapKeyRef:
+              name: fastfood-config
+              key: SPRING_PROFILES_ACTIVE
+        - name: SERVER_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: fastfood-config
+              key: SERVER_PORT
+        - name: SPRING_DATASOURCE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: fastfood-config
+              key: SPRING_DATASOURCE_URL
+        - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: fastfood-config
+              key: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+        - name: SPRING_JPA_DATABASE_PLATFORM
+          valueFrom:
+            configMapKeyRef:
+              name: fastfood-config
+              key: SPRING_JPA_DATABASE_PLATFORM
+        - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+          valueFrom:
+            configMapKeyRef:
+              name: fastfood-config
+              key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        - name: MERCADOPAGO_ENABLED
+          valueFrom:
+            configMapKeyRef:
+              name: fastfood-config
+              key: MERCADOPAGO_ENABLED
+        - name: MERCADOPAGO_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: fastfood-config
+              key: MERCADOPAGO_API_BASE_URL
+        
+        # Configurações sensíveis do Secret
+        - name: SPRING_DATASOURCE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: fastfood-secrets
+              key: SPRING_DATASOURCE_USERNAME
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: fastfood-secrets
+              key: SPRING_DATASOURCE_PASSWORD
+        - name: MERCADOPAGO_ACCESS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: fastfood-secrets
+              key: MERCADOPAGO_ACCESS_TOKEN
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: fastfood-secrets
+              key: JWT_SECRET
+        
+        # Configurações de recursos otimizadas para HPA
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        
+        # Health Checks
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        
+        # Startup Probe para aplicações que demoram para iniciar
+        startupProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 10
+        
+        # Configurações de segurança
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+            - ALL
+      
+      # Configurações do Pod
+      securityContext:
+        fsGroup: 1000
+      
+      # Estratégia de restart
+      restartPolicy: Always
+      
+      # Tolerâncias para scheduling
+      tolerations:
+      - key: "node.kubernetes.io/not-ready"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 300
+      - key: "node.kubernetes.io/unreachable"
+        operator: "Exists"
+        effect: "NoExecute"
+
+

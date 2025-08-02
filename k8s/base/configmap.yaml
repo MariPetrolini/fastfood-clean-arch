@@ -1,0 +1,83 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fastfood-config
+  namespace: fastfood
+  labels:
+    app: fastfood-api
+data:
+  # Configurações da aplicação
+  SPRING_PROFILES_ACTIVE: "prod"
+  SERVER_PORT: "8080"
+  
+  # Configurações do banco de dados
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres-service:5432/fastfood"
+  SPRING_DATASOURCE_DRIVER_CLASS_NAME: "org.postgresql.Driver"
+  SPRING_JPA_DATABASE_PLATFORM: "org.hibernate.dialect.PostgreSQLDialect"
+  SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
+  SPRING_JPA_SHOW_SQL: "false"
+  
+  # Configurações do Swagger
+  SPRINGDOC_API_DOCS_PATH: "/v3/api-docs"
+  SPRINGDOC_SWAGGER_UI_PATH: "/swagger-ui.html"
+  
+  # Configurações de segurança
+  SECURITY_CORS_ALLOWED_ORIGINS: "*"
+  SECURITY_CORS_ALLOWED_METHODS: "GET,POST,PUT,DELETE,OPTIONS"
+  SECURITY_CORS_ALLOWED_HEADERS: "*"
+  
+  # Configurações de negócio
+  APP_BUSINESS_PIX_EXPIRATION_MINUTES: "30"
+  APP_BUSINESS_ORDER_TIMEOUT_MINUTES: "15"
+  APP_BUSINESS_MINIMUM_STOCK: "5"
+  
+  # Configurações do Mercado Pago (não sensíveis)
+  MERCADOPAGO_ENABLED: "false"
+  MERCADOPAGO_API_BASE_URL: "https://api.mercadopago.com"
+  MERCADOPAGO_TIMEOUT_CONNECTION: "5000"
+  MERCADOPAGO_TIMEOUT_READ: "10000"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fastfood-config-dev
+  namespace: fastfood-dev
+  labels:
+    app: fastfood-api
+    environment: development
+data:
+  # Configurações da aplicação para desenvolvimento
+  SPRING_PROFILES_ACTIVE: "dev"
+  SERVER_PORT: "8080"
+  
+  # Configurações do banco H2 para desenvolvimento
+  SPRING_DATASOURCE_URL: "jdbc:h2:mem:testdb"
+  SPRING_DATASOURCE_DRIVER_CLASS_NAME: "org.h2.Driver"
+  SPRING_DATASOURCE_USERNAME: "sa"
+  SPRING_DATASOURCE_PASSWORD: ""
+  SPRING_JPA_DATABASE_PLATFORM: "org.hibernate.dialect.H2Dialect"
+  SPRING_JPA_HIBERNATE_DDL_AUTO: "create-drop"
+  SPRING_JPA_SHOW_SQL: "true"
+  SPRING_H2_CONSOLE_ENABLED: "true"
+  SPRING_H2_CONSOLE_PATH: "/h2-console"
+  
+  # Configurações do Swagger
+  SPRINGDOC_API_DOCS_PATH: "/v3/api-docs"
+  SPRINGDOC_SWAGGER_UI_PATH: "/swagger-ui.html"
+  
+  # Configurações de segurança
+  SECURITY_CORS_ALLOWED_ORIGINS: "*"
+  SECURITY_CORS_ALLOWED_METHODS: "GET,POST,PUT,DELETE,OPTIONS"
+  SECURITY_CORS_ALLOWED_HEADERS: "*"
+  
+  # Configurações de negócio
+  APP_BUSINESS_PIX_EXPIRATION_MINUTES: "30"
+  APP_BUSINESS_ORDER_TIMEOUT_MINUTES: "15"
+  APP_BUSINESS_MINIMUM_STOCK: "5"
+  
+  # Configurações do Mercado Pago (desenvolvimento)
+  MERCADOPAGO_ENABLED: "false"
+  MERCADOPAGO_API_BASE_URL: "https://api.mercadopago.com"
+  MERCADOPAGO_TIMEOUT_CONNECTION: "5000"
+  MERCADOPAGO_TIMEOUT_READ: "10000"
+

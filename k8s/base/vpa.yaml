@@ -1,0 +1,56 @@
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: fastfood-api-vpa
+  namespace: fastfood
+  labels:
+    app: fastfood-api
+    component: vpa
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: fastfood-api
+  updatePolicy:
+    updateMode: "Auto"  # Atualiza automaticamente os pods
+  resourcePolicy:
+    containerPolicies:
+    - containerName: fastfood-api
+      minAllowed:
+        cpu: 100m
+        memory: 128Mi
+      maxAllowed:
+        cpu: 1000m
+        memory: 1Gi
+      controlledResources: ["cpu", "memory"]
+      controlledValues: RequestsAndLimits
+---
+# VPA para ambiente de desenvolvimento
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: fastfood-api-vpa-dev
+  namespace: fastfood-dev
+  labels:
+    app: fastfood-api
+    environment: development
+    component: vpa
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: fastfood-api-dev
+  updatePolicy:
+    updateMode: "Off"  # Apenas recomendações em dev
+  resourcePolicy:
+    containerPolicies:
+    - containerName: fastfood-api
+      minAllowed:
+        cpu: 50m
+        memory: 64Mi
+      maxAllowed:
+        cpu: 500m
+        memory: 512Mi
+      controlledResources: ["cpu", "memory"]
+      controlledValues: RequestsAndLimits
+
